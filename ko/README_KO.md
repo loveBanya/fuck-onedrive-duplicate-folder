@@ -13,11 +13,80 @@
 
 - 바탕화면/탐색기에 중복된 OneDrive 폴더를 만드는 레지스트리 항목 삭제
 - **자동 실행 + 콘솔 창 없음**
-- 탐색기 재시작 안 함 (다음 부팅 시 or 탐색기 재실행 시 삭제된거 보임)
-- **Windows 10 / 11 완벽 호환** // 사실 10은 안해봄 ㅋㅋ
+- 탐색기 재시작 안 함 (다음 부팅 시 or 탐색기 재실행 시 삭제된 거 보임)
+- **Windows 10 / 11 완벽 호환** (※ 사실 10은 안 해봄 ㅋㅋ)
 
 ---
 
 ## ⚙️ 사용법
 
+### 1. 두 파일을 시작프로그램 폴더에 넣기
+
+`onedirvereserve.bat` 과 `run_hidden.vbs` 파일을 아래 경로에 넣습니다:
+
+C:\Users\사용자명\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\
+
+
+이 폴더는 **윈도우가 부팅될 때 자동으로 실행되는 프로그램**들을 담는 폴더입니다.
+
+- `onedirvereserve.bat` → 중복 OneDrive 레지스트리 항목을 삭제해줌
+- `run_hidden.vbs` → BAT 파일을 **몰래 조용히 실행**해줌 (창 안 뜸)
+
+---
+
+### 2-1. `run_hidden.vbs` 수정
+
+해당 파일을 메모장으로 열고, **BAT 파일 경로 부분을 수정**해줘야 합니다.
+
+
+' 이 스크립트는 BAT 파일을 콘솔 창 없이 조용히 실행하기 위한 VBS 래퍼입니다.
+' 아래 경로는 본인의 onedirvereserve.bat 파일 위치에 맞게 수정해주세요.
+
+' 예시:
+' C:\Users\사용자명\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\onedirvereserve.bat
+' ↑ 위 경로는 일반적으로 Startup 폴더 위치이며, 사용자명은 PC 환경에 따라 다를 수 있습니다.
+
+' 아래 줄의 "경로를 넣어주세요" 부분을 실제 .bat 파일 경로로 변경하세요.
+
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run chr(34) & "경로를 넣어주세요" & chr(34), 0  ' ⚠ 여기를 실제 bat 경로로 수정
+Set WshShell = Nothing
+
+맨 아래 3줄이 코드입니다. 위의 한글 주석은 놔둬도 됩니다.
+
+"경로를 넣어주세요" 이 부분만 실제 .bat 파일 경로로 바꿔주세요.
+
+따옴표(")는 삭제하지 마세요.
+
+수정 후 저장하면 완료.
+
+두개 같은폴더에 있어야함, 저 경로는 onedirvereserve.bat 의 경로여야 함
+
+
+
+### 2-2. onedirvereserve.bat도 수정이 필요할 수 있음
+BAT 파일 안에 들어 있는 아래 레지스트리 경로:
+
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{04271989-C4D2-3BAD-F5DE-1179433B2F50}
+이게 PC마다 다를 수 있습니다.
+
+안 된다면 아래 순서로 직접 확인해서 바꿔주세요:
+
+Win + R → regedit 입력 후 실행
+
+아래 경로로 이동:
+
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace
+안에 있는 폴더들 중 OneDrive 중복 폴더로 보이는 항목을 확인
+
+해당 GUID 값을 .bat 파일에 복사해서 기존 값과 교체
+
+이렇게 하면 매번 수동 삭제할 필요 없이,
+시작할 때마다 자동으로 지우고 창도 안 뜨고 깔끔하게 정리됩니다.
+
+
+🤜🤛 안 되면?
+vbs에 경로 잘못 넣었을 확률 80%
+
+bat에 레지스트리 키 틀린 게 20%
 
